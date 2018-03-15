@@ -8,7 +8,7 @@ import (
 	"context"
 
 	"github.com/go-kit/kit/endpoint"
-	"github.com/go-kit/kit/tracing/opentracing"
+	//"github.com/go-kit/kit/tracing/opentracing"
 	"github.com/microservices-demo/user/db"
 	"github.com/microservices-demo/user/users"
 	stdopentracing "github.com/opentracing/opentracing-go"
@@ -30,18 +30,18 @@ type Endpoints struct {
 
 // MakeEndpoints returns an Endpoints structure, where each endpoint is
 // backed by the given service.
-func MakeEndpoints(s Service, tracer stdopentracing.Tracer) Endpoints {
+func MakeEndpoints(s Service) Endpoints {
 	return Endpoints{
-		LoginEndpoint:       opentracing.TraceServer(tracer, "GET /login")(MakeLoginEndpoint(s)),
-		RegisterEndpoint:    opentracing.TraceServer(tracer, "POST /register")(MakeRegisterEndpoint(s)),
-		HealthEndpoint:      opentracing.TraceServer(tracer, "GET /health")(MakeHealthEndpoint(s)),
-		UserGetEndpoint:     opentracing.TraceServer(tracer, "GET /customers")(MakeUserGetEndpoint(s)),
-		UserPostEndpoint:    opentracing.TraceServer(tracer, "POST /customers")(MakeUserPostEndpoint(s)),
-		AddressGetEndpoint:  opentracing.TraceServer(tracer, "GET /addresses")(MakeAddressGetEndpoint(s)),
-		AddressPostEndpoint: opentracing.TraceServer(tracer, "POST /addresses")(MakeAddressPostEndpoint(s)),
-		CardGetEndpoint:     opentracing.TraceServer(tracer, "GET /cards")(MakeCardGetEndpoint(s)),
-		DeleteEndpoint:      opentracing.TraceServer(tracer, "DELETE /")(MakeDeleteEndpoint(s)),
-		CardPostEndpoint:    opentracing.TraceServer(tracer, "POST /cards")(MakeCardPostEndpoint(s)),
+		LoginEndpoint:       MakeLoginEndpoint(s),
+		RegisterEndpoint:    MakeRegisterEndpoint(s),
+		HealthEndpoint:      MakeHealthEndpoint(s),
+		UserGetEndpoint:     MakeUserGetEndpoint(s),
+		UserPostEndpoint:    MakeUserPostEndpoint(s),
+                AddressGetEndpoint:  MakeAddressGetEndpoint(s),
+                AddressPostEndpoint: MakeAddressPostEndpoint(s),
+                CardGetEndpoint:     MakeCardGetEndpoint(s),
+                DeleteEndpoint:      MakeDeleteEndpoint(s),
+                CardPostEndpoint:    MakeCardPostEndpoint(s),
 	}
 }
 

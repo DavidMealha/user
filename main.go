@@ -7,20 +7,20 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"strings"
+	//"strings"
 	"syscall"
 
 	corelog "log"
 
 	"github.com/go-kit/kit/log"
-	kitprometheus "github.com/go-kit/kit/metrics/prometheus"
-	"github.com/microservices-demo/user/api"
-	"github.com/microservices-demo/user/db"
-	"github.com/microservices-demo/user/db/mongodb"
-	stdopentracing "github.com/opentracing/opentracing-go"
-	zipkin "github.com/openzipkin/zipkin-go-opentracing"
-	stdprometheus "github.com/prometheus/client_golang/prometheus"
-	commonMiddleware "github.com/weaveworks/common/middleware"
+	//kitprometheus "github.com/go-kit/kit/metrics/prometheus"
+	"github.com/DavidMealha/user/api"
+	"github.com/DavidMealha/db"
+	"github.com/DavidMealha/user/db/mongodb"
+	//stdopentracing "github.com/opentracing/opentracing-go"
+	//zipkin "github.com/openzipkin/zipkin-go-opentracing"
+	//stdprometheus "github.com/prometheus/client_golang/prometheus"
+	//commonMiddleware "github.com/weaveworks/common/middleware"
 )
 
 var (
@@ -28,21 +28,21 @@ var (
 	zip  string
 )
 
-var (
+/*var (
 	HTTPLatency = stdprometheus.NewHistogramVec(stdprometheus.HistogramOpts{
 		Name:    "request_duration_seconds",
 		Help:    "Time (in seconds) spent serving HTTP requests.",
 		Buckets: stdprometheus.DefBuckets,
 	}, []string{"method", "route", "status_code", "isWS"})
-)
+)*/
 
 const (
 	ServiceName = "user"
 )
 
 func init() {
-	stdprometheus.MustRegister(HTTPLatency)
-	flag.StringVar(&zip, "zipkin", os.Getenv("ZIPKIN"), "Zipkin address")
+	//stdprometheus.MustRegister(HTTPLatency)
+	//flag.StringVar(&zip, "zipkin", os.Getenv("ZIPKIN"), "Zipkin address")
 	flag.StringVar(&port, "port", "8084", "Port on which to run")
 	db.Register("mongodb", &mongodb.Mongo{})
 }
@@ -67,11 +67,11 @@ func main() {
 		logger.Log("err", err)
 		os.Exit(1)
 	}
-	localAddr := conn.LocalAddr().(*net.UDPAddr)
-	host := strings.Split(localAddr.String(), ":")[0]
+	//localAddr := conn.LocalAddr().(*net.UDPAddr)
+	//host := strings.Split(localAddr.String(), ":")[0]
 	defer conn.Close()
 
-	var tracer stdopentracing.Tracer
+	/*var tracer stdopentracing.Tracer
 	{
 		if zip == "" {
 			tracer = stdopentracing.NoopTracer{}
@@ -95,7 +95,8 @@ func main() {
 			}
 		}
 		stdopentracing.InitGlobalTracer(tracer)
-	}
+	}*/
+
 	dbconn := false
 	for !dbconn {
 		err := db.Init()
@@ -115,7 +116,7 @@ func main() {
 	{
 		service = api.NewFixedService()
 		service = api.LoggingMiddleware(logger)(service)
-		service = api.NewInstrumentingService(
+		/*service = api.NewInstrumentingService(
 			kitprometheus.NewCounterFrom(
 				stdprometheus.CounterOpts{
 					Namespace: "microservices_demo",
@@ -131,24 +132,25 @@ func main() {
 				Help:      "Total duration of requests in microseconds.",
 			}, fieldKeys),
 			service,
-		)
+		)*/
 	}
 
 	// Endpoint domain.
-	endpoints := api.MakeEndpoints(service, tracer)
+	endpoints := api.MakeEndpoints(service)
 
 	// HTTP router
-	router := api.MakeHTTPHandler(endpoints, logger, tracer)
+	router := api.MakeHTTPHandler(endpoints, logger)
 
-	httpMiddleware := []commonMiddleware.Interface{
+	/*httpMiddleware := []commonMiddleware.Interface{
 		commonMiddleware.Instrument{
 			Duration:     HTTPLatency,
 			RouteMatcher: router,
 		},
-	}
+	}*/
 
 	// Handler
-	handler := commonMiddleware.Merge(httpMiddleware...).Wrap(router)
+	//handler := commonMiddleware.Merge(httpMiddleware...).Wrap(router)
+	handler := router
 
 	// Create and launch the HTTP server.
 	go func() {
