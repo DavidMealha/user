@@ -1,5 +1,7 @@
 FROM golang:1.9.1-alpine
-ENV sourcesdir /go/src/github.com/microservices-demo/user/
+ENV sourcesdir /go/src/github.com/DavidMealha/user/
+RUN echo ${sourcesdir}
+
 ENV MONGO_HOST mytestdb:27017
 ENV HATEAOS user
 ENV USER_DATABASE mongodb

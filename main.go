@@ -15,7 +15,7 @@ import (
 	"github.com/go-kit/kit/log"
 	//kitprometheus "github.com/go-kit/kit/metrics/prometheus"
 	"github.com/DavidMealha/user/api"
-	"github.com/DavidMealha/db"
+	"github.com/DavidMealha/user/db"
 	"github.com/DavidMealha/user/db/mongodb"
 	//stdopentracing "github.com/opentracing/opentracing-go"
 	//zipkin "github.com/openzipkin/zipkin-go-opentracing"
@@ -43,7 +43,7 @@ const (
 func init() {
 	//stdprometheus.MustRegister(HTTPLatency)
 	//flag.StringVar(&zip, "zipkin", os.Getenv("ZIPKIN"), "Zipkin address")
-	flag.StringVar(&port, "port", "8084", "Port on which to run")
+	flag.StringVar(&port, "port", "8080", "Port on which to run")
 	db.Register("mongodb", &mongodb.Mongo{})
 }
 
@@ -110,7 +110,7 @@ func main() {
 		}
 	}
 
-	fieldKeys := []string{"method"}
+	//fieldKeys := []string{"method"}
 	// Service domain.
 	var service api.Service
 	{

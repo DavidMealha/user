@@ -1,7 +1,7 @@
-FROM golang:1.7-alpine
+FROM golang:1.9.1-alpine
 
-COPY . /go/src/github.com/microservices-demo/user/
-WORKDIR /go/src/github.com/microservices-demo/user/
+COPY . /go/src/github.com/DavidMealha/user/
+WORKDIR /go/src/github.com/DavidMealha/user/
 
 RUN apk update
 RUN apk add git
