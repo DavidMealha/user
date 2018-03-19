@@ -20,7 +20,11 @@ services:
     user-db:
         build:
             context: ./docker/user-db/
+            args:
+                port: 27018
         image: user-db-v0.1
+        networks:
+            - my-mongo-cluster
         hostname: user-db
         restart: always
         cap_drop:
@@ -35,4 +39,32 @@ services:
         environment:
             - reschedule=on-node-failure
         ports:
-            - "27017:27017"
+            - "27018:27017"
+        command: mongod --port 27018 --replSet rs0 --config /etc/mongodb.conf --smallfiles
+    user-db-replica:
+        build:
+            context: ./docker/user-db/
+            args:
+                port: 27019
+        image: user-db-v0.1
+        networks:
+            - my-mongo-cluster
+        hostname: user-db-replica
+        restart: always
+        cap_drop:
+            - all
+        cap_add:
+            - CHOWN
+            - SETGID
+            - SETUID
+        read_only: true
+        tmpfs:
+            - /tmp:rw,noexec,nosuid
+        environment:
+            - reschedule=on-node-failure
+        ports:
+            - "27019:27017"
+        command: mongod --port 27019 --replSet rs0 --config /etc/mongodb.conf --smallfiles
+networks:
+    my-mongo-cluster:
+        external: true
